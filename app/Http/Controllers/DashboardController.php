@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Models\Item;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $judul = 'Dashboard Inventaris';
-        $ringkasan = ['kategori' => 4, 'barang' => 28];
-    
+        $ringkasan = [
+            'kategori' => Category::count(),
+            'barang' => Item::count(),
+        ];
+
         return view('dashboard', compact('judul', 'ringkasan'));
     }
 }
