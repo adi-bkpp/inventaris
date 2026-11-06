@@ -6,7 +6,9 @@ use App\Models\Category;
 use App\Models\Item;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use RuntimeException;
 
 class ItemController extends Controller
 {
@@ -58,7 +60,18 @@ class ItemController extends Controller
             'name' => ['required', 'string', 'max:100'],
             'stock' => ['required', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0', 'max:9999999999.99'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:2048'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('items', 'public');
+
+            if ($photoPath === false) {
+                throw new RuntimeException('Foto item gagal disimpan.');
+            }
+
+            $validated['photo'] = $photoPath;
+        }
 
         Item::create($validated);
 
@@ -88,9 +101,28 @@ class ItemController extends Controller
             'name' => ['required', 'string', 'max:100'],
             'stock' => ['required', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0', 'max:9999999999.99'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
+        $previousPhoto = $item->photo;
+
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('items', 'public');
+
+            if ($photoPath === false) {
+                throw new RuntimeException('Foto item gagal disimpan.');
+            }
+
+            $validated['photo'] = $photoPath;
+        } else {
+            unset($validated['photo']);
+        }
+
         $item->update($validated);
+
+        if ($previousPhoto !== null && $item->photo !== $previousPhoto) {
+            Storage::disk('public')->delete($previousPhoto);
+        }
 
         return redirect()
             ->route('item.index')
@@ -102,7 +134,12 @@ class ItemController extends Controller
      */
     public function destroy(Item $item): RedirectResponse
     {
+        $photo = $item->photo;
         $item->delete();
+
+        if ($photo !== null) {
+            Storage::disk('public')->delete($photo);
+        }
 
         return redirect()
             ->route('item.index')

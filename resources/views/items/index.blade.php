@@ -41,6 +41,7 @@
                 <thead class="table-primary">
                     <tr>
                         <th scope="col">No.</th>
+                        <th scope="col">Foto</th>
                         <th scope="col">Nama Item</th>
                         <th scope="col">Kategori</th>
                         <th scope="col" class="text-end">Stok</th>
@@ -52,6 +53,15 @@
                     @forelse ($items as $item)
                         <tr>
                             <td class="text-muted">{{ $items->firstItem() + $loop->index }}</td>
+                            <td>
+                                @if ($item->photo)
+                                    <img src="{{ Storage::disk('public')->url($item->photo) }}"
+                                        alt="Foto {{ $item->name }}" class="img-thumbnail"
+                                        style="width: 56px; height: 56px; object-fit: cover;">
+                                @else
+                                    <span class="text-muted">—</span>
+                                @endif
+                            </td>
                             <td class="fw-semibold">{{ $item->name }}</td>
                             <td><span class="badge text-bg-light border">{{ $item->category->name }}</span></td>
                             <td class="text-end">
@@ -80,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-5">
+                            <td colspan="7" class="text-center text-muted py-5">
                                 @if ($search !== '')
                                     Tidak ada item yang cocok dengan pencarian "{{ $search }}".
                                 @else

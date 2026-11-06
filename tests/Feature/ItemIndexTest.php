@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Item;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ItemIndexTest extends TestCase
@@ -40,6 +41,25 @@ class ItemIndexTest extends TestCase
             ->assertSeeText('Elektronik')
             ->assertSeeText('12')
             ->assertSeeText('Rp75.000,50');
+    }
+
+    public function test_item_index_displays_the_item_photo(): void
+    {
+        Storage::fake('public');
+        $category = Category::create(['name' => 'Elektronik']);
+        Storage::disk('public')->put('items/mouse.jpg', 'photo');
+        Item::create([
+            'category_id' => $category->id,
+            'name' => 'Mouse USB',
+            'stock' => 12,
+            'price' => 75000,
+            'photo' => 'items/mouse.jpg',
+        ]);
+
+        $this->get(route('item.index'))
+            ->assertOk()
+            ->assertSee('src="'.Storage::disk('public')->url('items/mouse.jpg').'"', false)
+            ->assertSee('alt="Foto Mouse USB"', false);
     }
 
     public function test_items_with_stock_below_five_are_highlighted_orange(): void

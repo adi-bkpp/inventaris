@@ -1,6 +1,6 @@
 <form method="POST"
     action="{{ $item->exists ? route('item.update', $item) : route('item.store') }}"
-    class="card card-body">
+    class="card card-body" enctype="multipart/form-data">
     @php
         $priceValue = old('price', $item->price);
         if ($item->exists && is_numeric($priceValue)) {
@@ -51,14 +51,35 @@
     </div>
 
     <div class="mb-3">
-    <label for="price" class="form-label">Harga (Rp)</label>
-    <input id="price" name="price" type="number" min="0" max="9999999999.99"
-        step="0.01"
-        value="{{ $priceValue }}"
-        class="form-control @error('price') is-invalid @enderror" required>
-    @error('price')
-        <div class="invalid-feedback">{{ $message }}</div>
-    @enderror
+        <label for="price" class="form-label">Harga (Rp)</label>
+        <input id="price" name="price" type="number" min="0" max="9999999999.99"
+            step="0.01"
+            value="{{ $priceValue }}"
+            class="form-control @error('price') is-invalid @enderror" required>
+        @error('price')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="mb-3">
+        <label for="photo" class="form-label">Foto Item</label>
+        @if ($item->photo)
+            <div class="mb-2">
+                <img src="{{ Storage::disk('public')->url($item->photo) }}"
+                    alt="Foto {{ $item->name }}" class="img-thumbnail"
+                    style="width: 120px; height: 120px; object-fit: cover;">
+            </div>
+        @endif
+        <input id="photo" name="photo" type="file" accept=".jpg,.jpeg,.png,.webp"
+            class="form-control @error('photo') is-invalid @enderror">
+        <div class="form-text">Opsional. Format JPG, JPEG, PNG, atau WEBP; maksimal 2 MB.
+            @if ($item->photo)
+                Kosongkan jika tidak ingin mengganti foto saat ini.
+            @endif
+        </div>
+        @error('photo')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
     </div>
 
     <div class="d-flex gap-2">
