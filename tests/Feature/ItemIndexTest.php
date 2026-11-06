@@ -30,7 +30,7 @@ class ItemIndexTest extends TestCase
             'category_id' => $category->id,
             'name' => 'Mouse USB',
             'stock' => 12,
-            'price' => 75000,
+            'price' => '75000.50',
         ]);
 
         $response = $this->get(route('item.index'));
@@ -39,7 +39,7 @@ class ItemIndexTest extends TestCase
             ->assertSeeText('Mouse USB')
             ->assertSeeText('Elektronik')
             ->assertSeeText('12')
-            ->assertSeeText('Rp75.000');
+            ->assertSeeText('Rp75.000,50');
     }
 
     public function test_items_with_stock_below_five_are_highlighted_orange(): void

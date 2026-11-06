@@ -59,11 +59,12 @@ echo "Potongan: Rp" . number_format($hasil['potongan'], 0, ',', '.') . "\n";
 echo "Total Akhir: Rp" . number_format($hasil['totalAkhir'], 0, ',', '.');
 
 // buat function cari nilai terbesar yang menerima angka
-function cariNilaiTerbesar($angka) {
+function cariNilaiTerbesar(array $angka) {
+    if ($angka === []) {
+        throw new InvalidArgumentException('Daftar angka tidak boleh kosong.');
+    }
 
-    // tentukan variabel awal nilai terbesar
-    // $terbesar = $angka[0];
-    $terbesar = 0;
+    $terbesar = $angka[0];
 
     // buat perulangan untuk menelusuri angka
     foreach ($angka as $a) {

@@ -65,6 +65,19 @@ class LoginTest extends TestCase
         ]);
     }
 
+    public function test_database_seeder_does_not_create_default_accounts_in_production(): void
+    {
+        $this->app->detectEnvironment(fn () => 'production');
+
+        $this->artisan('db:seed', [
+            '--class' => DatabaseSeeder::class,
+            '--force' => true,
+        ])->assertSuccessful();
+
+        $this->assertDatabaseMissing('users', ['username' => 'admin']);
+        $this->assertDatabaseMissing('users', ['username' => 'test-user']);
+    }
+
     public function test_inventaris_pages_require_authentication(): void
     {
         $this->get(route('dashboard'))->assertRedirect(route('login'));

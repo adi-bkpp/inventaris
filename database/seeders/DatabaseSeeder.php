@@ -21,22 +21,24 @@ class DatabaseSeeder extends Seeder
             ItemSeeder::class,
         ]);
 
-        User::updateOrCreate(
-            ['username' => 'admin'],
-            [
-                'name' => 'Administrator',
-                'email' => 'admin@example.com',
-                'password' => 'admin',
-            ],
-        );
+        if (app()->environment(['local', 'testing'])) {
+            User::updateOrCreate(
+                ['username' => 'admin'],
+                [
+                    'name' => 'Administrator',
+                    'email' => 'admin@example.com',
+                    'password' => 'admin',
+                ],
+            );
 
-        User::updateOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'username' => 'test-user',
-                'password' => 'password',
-            ],
-        );
+            User::updateOrCreate(
+                ['email' => 'test@example.com'],
+                [
+                    'name' => 'Test User',
+                    'username' => 'test-user',
+                    'password' => 'password',
+                ],
+            );
+        }
     }
 }

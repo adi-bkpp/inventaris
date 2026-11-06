@@ -57,7 +57,7 @@ class ItemController extends Controller
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:100'],
             'stock' => ['required', 'integer', 'min:0'],
-            'price' => ['required', 'numeric', 'min:0', 'max:9999999999'],
+            'price' => ['required', 'numeric', 'min:0', 'max:9999999999.99'],
         ]);
 
         Item::create($validated);

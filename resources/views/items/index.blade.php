@@ -58,12 +58,12 @@
                                 <span @class([
                                     'badge text-bg-success' => $item->stock >= 5,
                                     'badge text-dark' => $item->stock < 5,
-                                ]) @if ($item->stock < 5) style="background-color: #fd7e14" @endif>
+                                ]) @if ($item->stock <= 5) style="background-color: #fd7e14" @endif>
                                     {{ number_format($item->stock, 0, ',', '.') }}
                                 </span>
                             </td>
                             <td class="text-end fw-semibold">
-                                Rp{{ number_format((float) $item->price, 0, ',', '.') }}
+                                Rp{{ number_format((float) $item->price, 2, ',', '.') }}
                             </td>
                             <td class="text-end">
                                 <div class="d-inline-flex gap-2">

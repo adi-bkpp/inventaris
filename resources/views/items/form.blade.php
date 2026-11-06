@@ -52,8 +52,8 @@
 
     <div class="mb-3">
     <label for="price" class="form-label">Harga (Rp)</label>
-    <input id="price" name="price" type="number" min="0" max="9999999999"
-        step="1"
+    <input id="price" name="price" type="number" min="0" max="9999999999.99"
+        step="0.01"
         value="{{ $priceValue }}"
         class="form-control @error('price') is-invalid @enderror" required>
     @error('price')

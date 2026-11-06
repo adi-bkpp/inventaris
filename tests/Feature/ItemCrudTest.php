@@ -65,6 +65,31 @@ class ItemCrudTest extends TestCase
         ]);
     }
 
+    public function test_item_prices_can_include_cents(): void
+    {
+        $category = Category::create(['name' => 'Elektronik']);
+
+        $response = $this->post(route('item.store'), [
+            'category_id' => $category->id,
+            'name' => 'Adaptor',
+            'stock' => 1,
+            'price' => '1234.56',
+        ]);
+
+        $response->assertRedirect(route('item.index'));
+        $item = Item::where('name', 'Adaptor')->firstOrFail();
+        $this->assertSame('1234.56', (string) $item->price);
+
+        $this->put(route('item.update', $item), [
+            'category_id' => $category->id,
+            'name' => 'Adaptor',
+            'stock' => 1,
+            'price' => '987.65',
+        ])->assertRedirect(route('item.index'));
+
+        $this->assertSame('987.65', (string) $item->fresh()->price);
+    }
+
     public function test_user_can_delete_an_item(): void
     {
         $category = Category::create(['name' => 'Elektronik']);
