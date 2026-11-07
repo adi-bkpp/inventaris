@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -30,6 +31,7 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard');
 
     Route::resource('category', CategoryController::class)->except('show');
+    Route::resource('supplier', SupplierController::class)->except('show');
 
     Route::resource('item', ItemController::class)->except('show');
 });

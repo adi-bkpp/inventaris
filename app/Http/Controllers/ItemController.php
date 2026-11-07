@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +25,7 @@ class ItemController extends Controller
         $search = $validated['search'] ?? '';
 
         $items = Item::query()
-            ->with('category')
+            ->with(['category', 'supplier'])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('name', 'like', "%{$search}%")
@@ -33,8 +34,8 @@ class ItemController extends Controller
                         });
                 });
             })
-            ->orderBy('name') //diurutkan berdasarkan nama
-            ->paginate(10) //maksimal 10 data dalam 1 halaman
+            ->orderBy('name') // diurutkan berdasarkan nama
+            ->paginate(10) // maksimal 10 data dalam 1 halaman
             ->withQueryString();
 
         return view('items.index', compact('items', 'search'));
@@ -48,6 +49,7 @@ class ItemController extends Controller
         return view('items.create', [
             'item' => new Item,
             'categories' => Category::query()->orderBy('name')->get(),
+            'suppliers' => Supplier::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -58,6 +60,7 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'name' => ['required', 'string', 'max:100'],
             'stock' => ['required', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0', 'max:9999999999.99'],
@@ -89,6 +92,7 @@ class ItemController extends Controller
         return view('items.edit', [
             'item' => $item,
             'categories' => Category::query()->orderBy('name')->get(),
+            'suppliers' => Supplier::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -99,6 +103,7 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'supplier_id' => ['nullable', 'integer', 'exists:suppliers,id'],
             'name' => ['required', 'string', 'max:100'],
             'stock' => ['required', 'integer', 'min:0'],
             'price' => ['required', 'numeric', 'min:0', 'max:9999999999.99'],

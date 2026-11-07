@@ -26,6 +26,11 @@
                     Kategori
                 </a>
 
+                <a class="nav-link{{ request()->routeIs('supplier.*') ? ' active' : '' }}"
+                    href="{{ route('supplier.index') }}">
+                    Supplier
+                </a>
+
                 <a class="nav-link{{ request()->routeIs('item.*') ? ' active' : '' }}"
                     href="{{ route('item.index') }}">
                     Item

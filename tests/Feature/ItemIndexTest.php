@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -41,6 +42,23 @@ class ItemIndexTest extends TestCase
             ->assertSeeText('Elektronik')
             ->assertSeeText('12')
             ->assertSeeText('Rp75.000,50');
+    }
+
+    public function test_item_index_displays_supplier_name_when_assigned(): void
+    {
+        $category = Category::create(['name' => 'Elektronik']);
+        $supplier = Supplier::factory()->create(['name' => 'PT Sumber Makmur']);
+        Item::create([
+            'category_id' => $category->id,
+            'supplier_id' => $supplier->id,
+            'name' => 'Mouse USB',
+            'stock' => 12,
+            'price' => 75000,
+        ]);
+
+        $this->get(route('item.index'))
+            ->assertOk()
+            ->assertSeeText('PT Sumber Makmur');
     }
 
     public function test_item_index_uses_the_inventory_favicon(): void

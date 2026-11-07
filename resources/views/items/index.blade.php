@@ -44,6 +44,7 @@
                         <th scope="col">Foto</th>
                         <th scope="col">Nama Item</th>
                         <th scope="col">Kategori</th>
+                        <th scope="col">Supplier</th>
                         <th scope="col" class="text-end">Stok</th>
                         <th scope="col" class="text-end">Harga</th>
                         <th scope="col" class="text-end">Aksi</th>
@@ -64,6 +65,7 @@
                             </td>
                             <td class="fw-semibold">{{ $item->name }}</td>
                             <td><span class="badge text-bg-light border">{{ $item->category->name }}</span></td>
+                            <td>{{ $item->supplier?->name ?? '—' }}</td>
                             <td class="text-end">
                                 <span @class([
                                     'badge text-bg-success' => $item->stock >= 5,
@@ -90,7 +92,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
+                            <td colspan="8" class="text-center text-muted py-5">
                                 @if ($search !== '')
                                     Tidak ada item yang cocok dengan pencarian "{{ $search }}".
                                 @else

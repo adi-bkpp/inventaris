@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -35,10 +36,102 @@ class ItemCrudTest extends TestCase
         $response->assertRedirect(route('item.index'));
         $this->assertDatabaseHas('items', [
             'category_id' => $category->id,
+            'supplier_id' => null,
             'name' => 'Mouse USB',
             'stock' => 12,
             'price' => 75000,
         ]);
+    }
+
+    public function test_user_can_create_an_item_with_a_supplier(): void
+    {
+        $category = Category::create(['name' => 'Elektronik']);
+        $supplier = Supplier::factory()->create();
+
+        $response = $this->post(route('item.store'), [
+            'category_id' => $category->id,
+            'supplier_id' => $supplier->id,
+            'name' => 'Mouse USB',
+            'stock' => 12,
+            'price' => 75000,
+        ]);
+
+        $response->assertRedirect(route('item.index'));
+        $this->assertDatabaseHas('items', [
+            'name' => 'Mouse USB',
+            'supplier_id' => $supplier->id,
+        ]);
+    }
+
+    public function test_user_can_update_an_item_supplier(): void
+    {
+        $category = Category::create(['name' => 'Elektronik']);
+        $supplier = Supplier::factory()->create();
+        $item = Item::create([
+            'category_id' => $category->id,
+            'name' => 'Mouse USB',
+            'stock' => 12,
+            'price' => 75000,
+        ]);
+
+        $response = $this->put(route('item.update', $item), [
+            'category_id' => $category->id,
+            'supplier_id' => $supplier->id,
+            'name' => $item->name,
+            'stock' => $item->stock,
+            'price' => $item->price,
+        ]);
+
+        $response->assertRedirect(route('item.index'));
+        $this->assertDatabaseHas('items', [
+            'id' => $item->id,
+            'supplier_id' => $supplier->id,
+        ]);
+    }
+
+    public function test_item_form_offers_suppliers_for_create_and_edit(): void
+    {
+        $category = Category::create(['name' => 'Elektronik']);
+        $supplier = Supplier::factory()->create(['name' => 'PT Sumber Makmur']);
+        $item = Item::create([
+            'category_id' => $category->id,
+            'supplier_id' => $supplier->id,
+            'name' => 'Mouse USB',
+            'stock' => 12,
+            'price' => 75000,
+        ]);
+
+        $this->get(route('item.create'))
+            ->assertOk()
+            ->assertSee('name="supplier_id"', false)
+            ->assertSeeText('PT Sumber Makmur');
+
+        $response = $this->get(route('item.edit', $item));
+
+        $response->assertOk()
+            ->assertSee('name="supplier_id"', false);
+        $this->assertMatchesRegularExpression(
+            '/<select id="supplier_id"[^>]*>.*?<option value="'.$supplier->id.'"[^>]*selected>/s',
+            $response->getContent(),
+        );
+    }
+
+    public function test_item_rejects_a_supplier_that_does_not_exist(): void
+    {
+        $category = Category::create(['name' => 'Elektronik']);
+
+        $this->from(route('item.create'))
+            ->post(route('item.store'), [
+                'category_id' => $category->id,
+                'supplier_id' => 999,
+                'name' => 'Mouse USB',
+                'stock' => 12,
+                'price' => 75000,
+            ])
+            ->assertRedirect(route('item.create'))
+            ->assertSessionHasErrors('supplier_id');
+
+        $this->assertDatabaseMissing('items', ['name' => 'Mouse USB']);
     }
 
     public function test_user_can_upload_a_photo_when_creating_an_item(): void
