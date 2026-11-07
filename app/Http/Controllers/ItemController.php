@@ -17,6 +17,7 @@ class ItemController extends Controller
      */
     public function index(Request $request): View
     {
+        // pencarian
         $validated = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
         ]);
@@ -32,8 +33,8 @@ class ItemController extends Controller
                         });
                 });
             })
-            ->orderBy('name')
-            ->paginate(10)
+            ->orderBy('name') //diurutkan berdasarkan nama
+            ->paginate(10) //maksimal 10 data dalam 1 halaman
             ->withQueryString();
 
         return view('items.index', compact('items', 'search'));
