@@ -43,6 +43,16 @@ class ItemIndexTest extends TestCase
             ->assertSeeText('Rp75.000,50');
     }
 
+    public function test_item_index_uses_the_inventory_favicon(): void
+    {
+        $response = $this->get(route('item.index'));
+
+        $response->assertOk()
+            ->assertSee('<link rel="icon" type="image/svg+xml" href="'.asset('favicon.svg').'">', false);
+
+        $this->assertFileExists(public_path('favicon.svg'));
+    }
+
     public function test_item_index_displays_the_item_photo(): void
     {
         Storage::fake('public');
