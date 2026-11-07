@@ -55,7 +55,7 @@
                             <td class="text-muted">{{ $items->firstItem() + $loop->index }}</td>
                             <td>
                                 @if ($item->photo)
-                                    <img src="{{ Storage::disk('public')->url($item->photo) }}"
+                                    <img src="{{ asset('storage/'.$item->photo) }}"
                                         alt="Foto {{ $item->name }}" class="img-thumbnail"
                                         style="width: 56px; height: 56px; object-fit: cover;">
                                 @else

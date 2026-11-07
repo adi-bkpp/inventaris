@@ -65,7 +65,7 @@
         <label for="photo" class="form-label">Foto Item</label>
         @if ($item->photo)
             <div class="mb-2">
-                <img src="{{ Storage::disk('public')->url($item->photo) }}"
+                <img src="{{ asset('storage/'.$item->photo) }}"
                     alt="Foto {{ $item->name }}" class="img-thumbnail"
                     style="width: 120px; height: 120px; object-fit: cover;">
             </div>

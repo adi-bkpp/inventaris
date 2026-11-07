@@ -56,9 +56,9 @@ class ItemIndexTest extends TestCase
             'photo' => 'items/mouse.jpg',
         ]);
 
-        $this->get(route('item.index'))
+        $this->get('http://inventaris.test/item')
             ->assertOk()
-            ->assertSee('src="'.Storage::disk('public')->url('items/mouse.jpg').'"', false)
+            ->assertSee('src="http://inventaris.test/storage/items/mouse.jpg"', false)
             ->assertSee('alt="Foto Mouse USB"', false);
     }
 

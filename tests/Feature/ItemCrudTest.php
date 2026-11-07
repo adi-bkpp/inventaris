@@ -266,9 +266,9 @@ class ItemCrudTest extends TestCase
             'photo' => 'items/mouse.jpg',
         ]);
 
-        $this->get(route('item.edit', $item))
+        $this->get('http://inventaris.test/item/'.$item->id.'/edit')
             ->assertOk()
-            ->assertSee('src="'.Storage::disk('public')->url('items/mouse.jpg').'"', false)
+            ->assertSee('src="http://inventaris.test/storage/items/mouse.jpg"', false)
             ->assertSee('alt="Foto Mouse USB"', false);
     }
 
